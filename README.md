@@ -1,2 +1,2 @@
-# leetcode_with_java
+# leetcode-with-java
 LeetCode with Java
