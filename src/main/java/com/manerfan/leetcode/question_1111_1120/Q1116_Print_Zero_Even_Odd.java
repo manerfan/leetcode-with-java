@@ -1,5 +1,6 @@
 package com.manerfan.leetcode.question_1111_1120;
 
+import java.util.concurrent.Semaphore;
 import java.util.function.IntConsumer;
 
 /**
@@ -7,9 +8,9 @@ import java.util.function.IntConsumer;
  *
  * class ZeroEvenOdd {
  *   public ZeroEvenOdd(int n) { ... }      // 构造函数
- *   public void zero(printNumber) { ... }  // 仅打印出 0
- *   public void even(printNumber) { ... }  // 仅打印出 偶数
- *   public void odd(printNumber) { ... }   // 仅打印出 奇数
+ * public void zero(printNumber) { ... }  // 仅打印出 0
+ * public void even(printNumber) { ... }  // 仅打印出 偶数
+ * public void odd(printNumber) { ... }   // 仅打印出 奇数
  * }
  * 相同的一个 ZeroEvenOdd 类实例将会传递给三个不同的线程：
  *
@@ -41,26 +42,78 @@ import java.util.function.IntConsumer;
 public class Q1116_Print_Zero_Even_Odd {
     private int n;
 
+    private Semaphore zeroSemaphore = new Semaphore(1);
+    private Semaphore evenSemaphore = new Semaphore(0);
+    private Semaphore oddSemaphore = new Semaphore(0);
+
     public Q1116_Print_Zero_Even_Odd(int n) {
         this.n = n;
     }
 
     // printNumber.accept(x) outputs "x", where x is an integer.
     public void zero(IntConsumer printNumber) throws InterruptedException {
-
+        for (int i = 1; i <= n; i++) {
+            zeroSemaphore.acquire();
+            printNumber.accept(0);
+            if ((i & 1) == 0) {
+                // 唤醒偶数
+                evenSemaphore.release();
+            } else {
+                // 唤醒奇数
+                oddSemaphore.release();
+            }
+        }
     }
 
     public void even(IntConsumer printNumber) throws InterruptedException {
-
+        for (int i = 2; i <= n; i += 2) {
+            evenSemaphore.acquire();
+            printNumber.accept(i);
+            // 重新唤醒zero
+            zeroSemaphore.release();
+        }
     }
 
     public void odd(IntConsumer printNumber) throws InterruptedException {
-
+        for (int i = 1; i <= n; i += 2) {
+            oddSemaphore.acquire();
+            printNumber.accept(i);
+            // 重新唤醒zero
+            zeroSemaphore.release();
+        }
     }
 
     //////////////////////////////////////////////
     ////////////// ↓↓↓ for test ↓↓↓ //////////////
     //////////////////////////////////////////////
 
+    public static void main(String[] args) {
+        IntConsumer printNumber = System.out::print;
+        Q1116_Print_Zero_Even_Odd print_zero_even_odd = new Q1116_Print_Zero_Even_Odd(11);
+
+        new Thread(() -> {
+            try {
+                print_zero_even_odd.zero(printNumber);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }, "Thread-zero").start();
+
+        new Thread(() -> {
+            try {
+                print_zero_even_odd.even(printNumber);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }, "Thread-even").start();
+
+        new Thread(() -> {
+            try {
+                print_zero_even_odd.odd(printNumber);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }, "Thread-odd").start();
+    }
 
 }
