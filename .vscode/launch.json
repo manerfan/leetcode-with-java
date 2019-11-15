@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "CodeLens (Launch) - Q1116_Print_Zero_Even_Odd",
+            "request": "launch",
+            "mainClass": "com.manerfan.leetcode.question_1111_1120.Q1116_Print_Zero_Even_Odd",
+            "projectName": "leetcode-with-java"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Q1115_Print_FooBar_Alternately",
+            "request": "launch",
+            "mainClass": "com.manerfan.leetcode.question_1111_1120.Q1115_Print_FooBar_Alternately",
+            "projectName": "leetcode-with-java"
+        },
+        {
+            "type": "java",
             "name": "CodeLens (Launch) - Q1114_Print_In_Order",
             "request": "launch",
             "mainClass": "com.manerfan.leetcode.question_1111_1120.Q1114_Print_In_Order",
